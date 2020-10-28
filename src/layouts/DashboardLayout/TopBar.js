@@ -19,7 +19,7 @@ import Logo from 'src/components/Logo';
 const useStyles = makeStyles(() => ({
   root: {},
   avatar: {
-    width: 60,
+    width: 150,
     height: 60
   }
 }));
@@ -40,7 +40,7 @@ const TopBar = ({
     >
       <Toolbar>
         <RouterLink to="/">
-          <Logo />
+          <Logo className={classes.avatar} />
         </RouterLink>
         <Box flexGrow={1} />
         <Hidden mdDown>
