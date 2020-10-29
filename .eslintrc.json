@@ -37,6 +37,13 @@
     "react/forbid-prop-types": "off",
     "react/jsx-filename-extension": "off",
     "react/jsx-props-no-spreading": "off",
-    "react/require-default-props": "off"
-  }
+    "react/require-default-props": "off",
+    "no-underscore-dangle": "off"
+  },
+  "ignorePatterns": [
+    "dist/",
+    "build/",
+    "public/",
+    "node_modules/"
+  ]
 }
