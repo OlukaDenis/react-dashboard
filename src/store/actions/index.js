@@ -8,7 +8,7 @@ import {
   requestSkills, skillError, skillLoading, skillSuccess,
 } from './skillActions';
 import {
-  setLogIn, setLogOut, authLoading, loggedInUser,
+  setLogIn, setLogOut, authLoading, loggedInUser, createUser,
 } from './authActions';
 import {
   drawerClosed, drawerOpened,
@@ -72,6 +72,12 @@ const logOutUser = () => (dispatch) => {
   dispatch(setLogOut());
 };
 
+const signUpUser = () => (dispatch) => {
+  dispatch(authLoading());
+  dispatch(createUser({ name: 'Denis Oluka', email: 'olukadeno@gmail.com' }));
+  dispatch(dispatch(setLogIn()));
+};
+
 export {
   fetchProjects,
   fetchSkills,
@@ -80,4 +86,5 @@ export {
   closeDrawer,
   logInUser,
   logOutUser,
+  signUpUser,
 };

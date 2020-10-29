@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import {
   Box,
@@ -14,6 +14,8 @@ import {
   makeStyles
 } from '@material-ui/core';
 import Page from 'src/components/Page';
+import { signUpUser } from '../../store/actions';
+import { SignUpSchema } from '../../utils';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,6 +30,51 @@ const RegisterView = () => {
   const classes = useStyles();
   const navigate = useNavigate();
 
+  const authReducer = useSelector((state) => state.authReducer);
+  const { isLoggedIn } = authReducer;
+  const dispatch = useDispatch();
+
+  const navigateToDashboard = () => {
+    navigate('/shuppa/dashboard', { replace: true });
+  };
+
+  const initialValues = {
+    email: '',
+    firstName: '',
+    lastName: '',
+    password: '',
+    policy: false
+  };
+
+  const validate = (values) => {
+    const errors = {};
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+    if (!values.email) {
+      errors.email = 'Email is required';
+    } else if (!regex.test(values.email)) {
+      errors.email = 'Invalid Email';
+    }
+    if (!values.password) {
+      errors.password = 'Password is required';
+    } else if (values.password.length < 4) {
+      errors.password = 'Password too short';
+    }
+    return errors;
+  };
+
+  const submitForm = (values) => {
+    console.log(values);
+    dispatch(signUpUser());
+    console.log(authReducer);
+    navigateToDashboard();
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigateToDashboard();
+    }
+  }, []);
+
   return (
     <Page
       className={classes.root}
@@ -41,25 +88,10 @@ const RegisterView = () => {
       >
         <Container maxWidth="sm">
           <Formik
-            initialValues={{
-              email: '',
-              firstName: '',
-              lastName: '',
-              password: '',
-              policy: false
-            }}
-            validationSchema={
-              Yup.object().shape({
-                email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                firstName: Yup.string().max(255).required('First name is required'),
-                lastName: Yup.string().max(255).required('Last name is required'),
-                password: Yup.string().max(255).required('password is required'),
-                policy: Yup.boolean().oneOf([true], 'This field must be checked')
-              })
-            }
-            onSubmit={() => {
-              navigate('/app/dashboard', { replace: true });
-            }}
+            initialValues={initialValues}
+            validationSchema={SignUpSchema}
+            validate={validate}
+            onSubmit={submitForm}
           >
             {({
               errors,
@@ -83,7 +115,7 @@ const RegisterView = () => {
                     gutterBottom
                     variant="body2"
                   >
-                    Use your email to create new account
+                    Use your email to create new Shuppa account
                   </Typography>
                 </Box>
                 <TextField

@@ -2,7 +2,7 @@ import appConstants from '../constants';
 import initialState from '../initialState';
 
 const {
-  APP_LOADING, SET_LOG_IN, SET_LOG_OUT, LOGGED_USER,
+  APP_LOADING, SET_LOG_IN, SET_LOG_OUT, LOGGED_USER, SIGN_UP_USER
 } = appConstants;
 
 const authReducer = (state = initialState, action) => {
@@ -22,6 +22,13 @@ const authReducer = (state = initialState, action) => {
       };
 
     case LOGGED_USER:
+      return {
+        ...state,
+        user: action.user,
+        loading: false,
+      };
+
+    case SIGN_UP_USER:
       return {
         ...state,
         user: action.user,

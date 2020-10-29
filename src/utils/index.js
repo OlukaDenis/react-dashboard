@@ -12,12 +12,12 @@ const SignUpSchema = Yup.object().shape({
     .max(50, 'Too Long!')
     .required('Lastname is required'),
 
-  phoneNumber: Yup.string()
-    .required('Phone number is required')
-    .matches(
-      /^([0]{1}|\+?[234]{3})([7-9]{1})([0|1]{1})([\d]{1})([\d]{7})$/g,
-      'Invalid phone number'
-    ),
+  // phoneNumber: Yup.string()
+  //   .required('Phone number is required')
+  //   .matches(
+  //     /^([0]{1}|\+?[234]{3})([7-9]{1})([0|1]{1})([\d]{1})([\d]{7})$/g,
+  //     'Invalid phone number'
+  //   ),
 
   email: Yup.string().email().required('Email is required'),
 
