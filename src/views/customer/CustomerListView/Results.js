@@ -17,7 +17,7 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
-import getInitials from 'src/utils/getInitials';
+import { getInitials } from 'src/utils';
 
 const useStyles = makeStyles((theme) => ({
   root: {},

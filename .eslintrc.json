@@ -38,7 +38,8 @@
     "react/jsx-filename-extension": "off",
     "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "no-multiple-empty-lines": [2, {"max": 99999, "maxEOF": 0}]
   },
   "ignorePatterns": [
     "dist/",

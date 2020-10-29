@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import {
   Box,
@@ -15,6 +15,8 @@ import {
 import FacebookIcon from 'src/icons/Facebook';
 import GoogleIcon from 'src/icons/Google';
 import Page from 'src/components/Page';
+import { logInUser } from '../../store/actions';
+import { LoginSchema } from '../../utils';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,6 +31,45 @@ const LoginView = () => {
   const classes = useStyles();
   const navigate = useNavigate();
 
+  const initialValues = { email: '', password: '' };
+
+  const validate = (values) => {
+    const errors = {};
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+    if (!values.email) {
+      errors.email = 'Email is required';
+    } else if (!regex.test(values.email)) {
+      errors.email = 'Invalid Email';
+    }
+    if (!values.password) {
+      errors.password = 'Password is required';
+    } else if (values.password.length < 4) {
+      errors.password = 'Password too short';
+    }
+    return errors;
+  };
+
+  const authReducer = useSelector((state) => state.authReducer);
+  const { isLoggedIn } = authReducer;
+  const dispatch = useDispatch();
+
+  const navigateToDashboard = () => {
+    navigate('/shuppa/dashboard', { replace: true });
+  };
+
+  const submitForm = (values) => {
+    console.log(values);
+    dispatch(logInUser());
+    console.log(authReducer);
+    navigateToDashboard();
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigateToDashboard();
+    }
+  }, []);
+
   return (
     <Page
       className={classes.root}
@@ -42,26 +83,19 @@ const LoginView = () => {
       >
         <Container maxWidth="sm">
           <Formik
-            initialValues={{
-              email: 'demo@devias.io',
-              password: 'Password123'
-            }}
-            validationSchema={Yup.object().shape({
-              email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-              password: Yup.string().max(255).required('Password is required')
-            })}
-            onSubmit={() => {
-              navigate('/app/dashboard', { replace: true });
-            }}
+            initialValues={initialValues}
+            validationSchema={LoginSchema}
+            validate={validate}
+            onSubmit={submitForm}
           >
             {({
               errors,
               handleBlur,
               handleChange,
-              handleSubmit,
               isSubmitting,
               touched,
-              values
+              values,
+              handleSubmit
             }) => (
               <form onSubmit={handleSubmit}>
                 <Box mb={3}>
@@ -76,7 +110,7 @@ const LoginView = () => {
                     gutterBottom
                     variant="body2"
                   >
-                    Sign in on the internal platform
+                    Welcome back to Shuppa dashboard
                   </Typography>
                 </Box>
                 <Grid

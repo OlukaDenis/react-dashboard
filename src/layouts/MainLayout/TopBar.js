@@ -13,6 +13,10 @@ const useStyles = makeStyles(({
   root: {},
   toolbar: {
     height: 64
+  },
+  avatar: {
+    width: 150,
+    height: 60
   }
 }));
 
@@ -27,7 +31,7 @@ const TopBar = ({ className, ...rest }) => {
     >
       <Toolbar className={classes.toolbar}>
         <RouterLink to="/">
-          <Logo />
+          <Logo className={classes.avatar} />
         </RouterLink>
       </Toolbar>
     </AppBar>

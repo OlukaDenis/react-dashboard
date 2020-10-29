@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import NavBar from './NavBar';
 import TopBar from './TopBar';
@@ -35,10 +37,23 @@ const useStyles = makeStyles((theme) => ({
 
 const DashboardLayout = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
   const [isMobileNavOpen, setMobileNavOpen] = useState(false);
+
+  const authReducer = useSelector((state) => state.authReducer);
+  const { isLoggedIn } = authReducer;
+  // const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log(authReducer);
+    if (!isLoggedIn) {
+      navigate('/login', { replace: true });
+    }
+  }, []);
 
   return (
     <div className={classes.root}>
+      {isLoggedIn}
       <TopBar onMobileNavOpen={() => setMobileNavOpen(true)} />
       <NavBar
         onMobileClose={() => setMobileNavOpen(false)}
