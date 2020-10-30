@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik } from 'formik';
@@ -17,8 +17,12 @@ import MuiAlert from '@material-ui/lab/Alert';
 import FacebookIcon from 'src/icons/Facebook';
 import GoogleIcon from 'src/icons/Google';
 import Page from 'src/components/Page';
-import { logInUser } from '../../store/actions';
+import { firebaseApp } from '../../firebase';
 import { LoginSchema } from '../../utils';
+import { showAlert, closeAlert } from '../../store/actions/alertActions';
+import {
+  setLogIn, loggedInUser, authLoading, authError
+} from '../../store/actions/authActions';
 
 const Alert = (props) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -42,10 +46,11 @@ const useStyles = makeStyles((theme) => ({
 const LoginView = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
 
   const authReducer = useSelector((state) => state.authReducer);
+  const alertReducer = useSelector((state) => state.alertReducer);
   const { error, loading, isLoggedIn } = authReducer;
+  const { open } = alertReducer;
   const dispatch = useDispatch();
 
   const navigateToDashboard = () => {
@@ -72,10 +77,20 @@ const LoginView = () => {
 
 
   const submitForm = (values) => {
-    console.log(values);
-    dispatch(logInUser(values));
-    console.log(authReducer);
-    navigateToDashboard();
+    dispatch(authLoading());
+    const { email, password } = values;
+    firebaseApp.auth().signInWithEmailAndPassword(email, password)
+      .then((result) => {
+        dispatch(dispatch(setLogIn()));
+        console.log(result);
+        dispatch(loggedInUser(result.user));
+        navigateToDashboard();
+      })
+      .catch((err) => {
+        dispatch(authError(err.message));
+        dispatch(showAlert());
+        console.log(err);
+      });
   };
 
   useEffect(() => {
@@ -84,17 +99,13 @@ const LoginView = () => {
     }
   }, []);
 
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-  };
-
   const ShowError = () => {
-    useEffect(() => {
-      setOpen(true);
-    }, []);
+    const handleClose = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      dispatch(closeAlert());
+    };
 
     return (
       <Snackbar open={open} autoHideDuration={30000} onClose={handleClose}>
@@ -130,7 +141,6 @@ const LoginView = () => {
                   errors,
                   handleBlur,
                   handleChange,
-                  isSubmitting,
                   touched,
                   values,
                   handleSubmit
@@ -228,7 +238,7 @@ const LoginView = () => {
                     <Box my={2}>
                       <Button
                         color="primary"
-                        disabled={isSubmitting}
+                        disabled={loading}
                         fullWidth
                         size="large"
                         type="submit"
