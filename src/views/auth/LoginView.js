@@ -7,39 +7,29 @@ import {
   Button,
   Container,
   Grid,
-  Snackbar,
   Link,
   TextField,
   Typography,
   makeStyles
 } from '@material-ui/core';
-import MuiAlert from '@material-ui/lab/Alert';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import FacebookIcon from 'src/icons/Facebook';
 import GoogleIcon from 'src/icons/Google';
 import Page from 'src/components/Page';
+import AppAlerts from '../../components/AppAlerts';
 import { firebaseApp } from '../../firebase';
 import { LoginSchema } from '../../utils';
-import { showAlert, closeAlert } from '../../store/actions/alertActions';
+import { showAlert } from '../../store/actions/alertActions';
 import {
   setLogIn, loggedInUser, authLoading, authError
 } from '../../store/actions/authActions';
-
-const Alert = (props) => {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-};
 
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
     height: '100%',
     paddingBottom: theme.spacing(3),
-    paddingTop: theme.spacing(3)
-  },
-  snackRoot: {
-    width: '100%',
-    '& > * + *': {
-      marginTop: theme.spacing(2),
-    },
+    paddingTop: theme.spacing(3),
   }
 }));
 
@@ -48,9 +38,7 @@ const LoginView = () => {
   const navigate = useNavigate();
 
   const authReducer = useSelector((state) => state.authReducer);
-  const alertReducer = useSelector((state) => state.alertReducer);
   const { error, loading, isLoggedIn } = authReducer;
-  const { open } = alertReducer;
   const dispatch = useDispatch();
 
   const navigateToDashboard = () => {
@@ -99,26 +87,9 @@ const LoginView = () => {
     }
   }, []);
 
-  const ShowError = () => {
-    const handleClose = (event, reason) => {
-      if (reason === 'clickaway') {
-        return;
-      }
-      dispatch(closeAlert());
-    };
-
-    return (
-      <Snackbar open={open} autoHideDuration={30000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="error">
-          { error }
-        </Alert>
-      </Snackbar>
-    );
-  };
-
   return (
     <div>
-      { loading && <p>Loading...</p> }
+      { loading && <LinearProgress color="secondary" /> }
       {(
         <Page
           className={classes.root}
@@ -268,7 +239,7 @@ const LoginView = () => {
           </Box>
         </Page>
           )}
-      { error && <ShowError />}
+      { error && <AppAlerts message="error" error={error} />}
     </div>
   );
 };
