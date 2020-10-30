@@ -1,3 +1,5 @@
+import { firebaseApp } from '../../firebase';
+
 import {
   blogError, blogLoading, blogSuccess, requestBlogs,
 } from './blogActions';
@@ -8,7 +10,7 @@ import {
   requestSkills, skillError, skillLoading, skillSuccess,
 } from './skillActions';
 import {
-  setLogIn, setLogOut, authLoading, loggedInUser, createUser,
+  setLogIn, setLogOut, authLoading, loggedInUser, createUser, authError,
 } from './authActions';
 import {
   drawerClosed, drawerOpened,
@@ -61,10 +63,19 @@ const closeDrawer = () => (dispatch) => {
   dispatch(drawerClosed());
 };
 
-const logInUser = () => (dispatch) => {
+const logInUser = (payload) => (dispatch) => {
   dispatch(authLoading());
-  dispatch(dispatch(setLogIn()));
-  dispatch(loggedInUser({ name: 'Denis Oluka', email: 'olukadeno@gmail.com' }));
+  const { email, password } = payload;
+  firebaseApp.auth().signInWithEmailAndPassword(email, password)
+    .then((result) => {
+      dispatch(dispatch(setLogIn()));
+      console.log(result);
+      dispatch(loggedInUser(result));
+    })
+    .catch((err) => {
+      dispatch(authError(err.message));
+      console.log(err);
+    });
 };
 
 const logOutUser = () => (dispatch) => {

@@ -2,7 +2,7 @@ import appConstants from '../constants';
 import initialState from '../initialState';
 
 const {
-  APP_LOADING, SET_LOG_IN, SET_LOG_OUT, LOGGED_USER, SIGN_UP_USER
+  APP_LOADING, SET_LOG_IN, SET_LOG_OUT, LOGGED_USER, SIGN_UP_USER, AUTH_ERROR,
 } = appConstants;
 
 const authReducer = (state = initialState, action) => {
@@ -39,6 +39,13 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
+      };
+
+    case AUTH_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: action.message,
       };
 
     default:

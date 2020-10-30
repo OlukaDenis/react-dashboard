@@ -15,7 +15,7 @@
 /.firebase
 
 # loacl config
-localConfig.js
+src/localConfig.js
 
 # misc
 .DS_Store
