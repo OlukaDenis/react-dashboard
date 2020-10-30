@@ -70,7 +70,7 @@ const logInUser = (payload) => (dispatch) => {
     .then((result) => {
       dispatch(dispatch(setLogIn()));
       console.log(result);
-      dispatch(loggedInUser(result));
+      dispatch(loggedInUser(result.user));
     })
     .catch((err) => {
       dispatch(authError(err.message));
