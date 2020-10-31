@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Page from 'src/components/Page';
-import { firebaseApp } from '../../firebase';
+import { firebaseApp, db } from '../../firebase';
 import { SignUpSchema } from '../../utils';
 import AppAlerts from '../../components/AppAlerts';
 import { showAlert } from '../../store/actions/alertActions';
@@ -70,13 +70,34 @@ const RegisterView = () => {
 
   const submitForm = (values) => {
     dispatch(authLoading());
-    const { email, password } = values;
+    const {
+      email, password, firstName, lastName
+    } = values;
     firebaseApp.auth().createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        console.log(result);
-        dispatch(loggedInUser(result.user));
-        dispatch(dispatch(setLogIn()));
-        navigateToDashboard();
+        const displayName = `${firstName} ${lastName}`;
+        const { currentUser } = firebaseApp.auth();
+        currentUser.updateProfile({ displayName });
+
+        db.doc(`/users/${currentUser.uid}`)
+          .set({
+            phone: currentUser.phoneNumber || '',
+            email: currentUser.email || '',
+            name: displayName || '',
+            uid: currentUser.uid || '',
+            emailVerified: currentUser.emailVerified || false,
+            image: currentUser.photoURL || '',
+            admin: true,
+            createdAt: Date.now(),
+          }).then((res) => {
+            console.log(res);
+            dispatch(dispatch(setLogIn()));
+            dispatch(loggedInUser(result.user));
+            navigateToDashboard();
+          }).catch((err) => {
+            dispatch(authError(err.message));
+            dispatch(showAlert());
+          });
       })
       .catch((err) => {
         dispatch(authError(err.message));

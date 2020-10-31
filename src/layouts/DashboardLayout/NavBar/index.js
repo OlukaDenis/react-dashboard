@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   Avatar,
@@ -9,7 +10,8 @@ import {
   Hidden,
   List,
   Typography,
-  makeStyles
+  makeStyles,
+  Button
 } from '@material-ui/core';
 import {
   // AlertCircle as AlertCircleIcon,
@@ -19,60 +21,15 @@ import {
   ShoppingBag as ShoppingBagIcon,
   User as UserIcon,
   // UserPlus as UserPlusIcon,
-  Users as UsersIcon
+  Users as UsersIcon,
+  Power as LogoutIcon,
 } from 'react-feather';
 import NavItem from './NavItem';
+import {
+  setLogOut, loggedInUser, authLoading
+} from '../../../store/actions/authActions';
 
-const user = {
-  avatar: '/static/images/avatars/admin.jpg',
-  jobTitle: 'Admin',
-  name: 'Shuppa'
-};
-
-const items = [
-  {
-    href: '/shuppa/dashboard',
-    icon: BarChartIcon,
-    title: 'Dashboard'
-  },
-  {
-    href: '/shuppa/customers',
-    icon: UsersIcon,
-    title: 'Customers'
-  },
-  {
-    href: '/shuppa/products',
-    icon: ShoppingBagIcon,
-    title: 'Products'
-  },
-  {
-    href: '/shuppa/account',
-    icon: UserIcon,
-    title: 'Account'
-  },
-  {
-    href: '/shuppa/settings',
-    icon: SettingsIcon,
-    title: 'Settings'
-  },
-  // {
-  //   href: '/login',
-  //   icon: LockIcon,
-  //   title: 'Login'
-  // },
-  // {
-  //   href: '/register',
-  //   icon: UserPlusIcon,
-  //   title: 'Register'
-  // },
-  // {
-  //   href: '/404',
-  //   icon: AlertCircleIcon,
-  //   title: 'Error'
-  // }
-];
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   mobileDrawer: {
     width: 256
   },
@@ -85,12 +42,70 @@ const useStyles = makeStyles(() => ({
     cursor: 'pointer',
     width: 64,
     height: 64
+  },
+  button: {
+    color: theme.palette.text.secondary,
+    fontWeight: theme.typography.fontWeightMedium,
+    justifyContent: 'flex-start',
+    letterSpacing: 0,
+    padding: '10px 8px',
+    textTransform: 'none',
+    width: '100%'
+  },
+  icon: {
+    marginRight: theme.spacing(1)
+  },
+  title: {
+    marginRight: 'auto'
+  },
+  active: {
+    color: theme.palette.primary.main,
+    '& $title': {
+      fontWeight: theme.typography.fontWeightMedium
+    },
+    '& $icon': {
+      color: theme.palette.primary.main
+    }
   }
 }));
 
 const NavBar = ({ onMobileClose, openMobile }) => {
   const classes = useStyles();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const authReducer = useSelector((state) => state.authReducer);
+  const { user, isLoggedIn } = authReducer;
+  console.log(authReducer);
+  const dispatch = useDispatch();
+
+  const items = [
+    {
+      href: '/shuppa/dashboard',
+      icon: BarChartIcon,
+      title: 'Dashboard'
+    },
+    {
+      href: '/shuppa/customers',
+      icon: UsersIcon,
+      title: 'Customers'
+    },
+    {
+      href: '/shuppa/products',
+      icon: ShoppingBagIcon,
+      title: 'Products'
+    },
+    {
+      href: '/shuppa/account',
+      icon: UserIcon,
+      title: 'Account'
+    },
+    {
+      href: '/shuppa/settings',
+      icon: SettingsIcon,
+      title: 'Settings'
+    }
+  ];
 
   useEffect(() => {
     if (openMobile && onMobileClose) {
@@ -98,6 +113,15 @@ const NavBar = ({ onMobileClose, openMobile }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
+
+  const handleLogout = () => {
+    if (isLoggedIn && user) {
+      dispatch(authLoading());
+      dispatch(setLogOut());
+      dispatch(loggedInUser({}));
+      navigate('/login', { replace: true });
+    }
+  };
 
   const content = (
     <Box
@@ -114,7 +138,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
         <Avatar
           className={classes.avatar}
           component={RouterLink}
-          src={user.avatar}
+          src="/static/images/avatars/admin.jpg"
           to="/shuppa/account"
         />
         <Typography
@@ -122,13 +146,13 @@ const NavBar = ({ onMobileClose, openMobile }) => {
           color="textPrimary"
           variant="h5"
         >
-          {user.name}
+          {user.displayName}
         </Typography>
         <Typography
           color="textSecondary"
           variant="body2"
         >
-          {user.jobTitle}
+          {user.email}
         </Typography>
       </Box>
       <Divider />
@@ -142,6 +166,15 @@ const NavBar = ({ onMobileClose, openMobile }) => {
               icon={item.icon}
             />
           ))}
+          <Button className={classes.button} onClick={handleLogout}>
+            <LogoutIcon
+              className={classes.icon}
+              size="20"
+            />
+            <span className={classes.title}>
+              Logout
+            </span>
+          </Button>
         </List>
       </Box>
       <Box flexGrow={1} />
