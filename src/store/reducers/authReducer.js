@@ -26,6 +26,7 @@ const authReducer = (state = initialState, action) => {
         ...state,
         user: action.user,
         loading: false,
+        error: '',
       };
 
     case SIGN_UP_USER:
@@ -33,6 +34,7 @@ const authReducer = (state = initialState, action) => {
         ...state,
         user: action.user,
         loading: false,
+        error: '',
       };
 
     case APP_LOADING:
