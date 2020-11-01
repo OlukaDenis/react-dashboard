@@ -13,7 +13,7 @@ import SettingsView from 'src/views/settings/SettingsView';
 
 const routes = [
   {
-    path: 'app',
+    path: 'shuppa',
     element: <DashboardLayout />,
     children: [
       { path: 'account', element: <AccountView /> },
@@ -31,7 +31,7 @@ const routes = [
       { path: 'login', element: <LoginView /> },
       { path: 'register', element: <RegisterView /> },
       { path: '404', element: <NotFoundView /> },
-      { path: '/', element: <Navigate to="/app/dashboard" /> },
+      { path: '/', element: <Navigate to="/login" /> },
       { path: '*', element: <Navigate to="/404" /> }
     ]
   }

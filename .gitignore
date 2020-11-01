@@ -11,6 +11,12 @@
 # production
 /build
 
+# firebase
+/.firebase
+
+# loacl config
+src/localConfig.js
+
 # misc
 .DS_Store
 /.env
@@ -22,3 +28,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+ui-debug.log*
+firebase-debug.log*
+database-debug.log*
+firestore-debug.log*
