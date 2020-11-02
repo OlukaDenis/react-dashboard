@@ -6,7 +6,8 @@ name: Deploy to Firebase
 # events but only for the master branch
 on:
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -33,10 +34,8 @@ jobs:
         run: npm ci && npm run build
         
       - name: Deploy the project
-        uses: FirebaseExtended/action-hosting-deploy@v0
+        uses: w9jds/firebase-action@v1.5.0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_DENIS_PORTFOLIO }}'
-          projectId: denis-portfolio
+          args: deploy --only hosting
         env: 
-          FIREBASE_CLI_PREVIEWS: hostingchannels
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
