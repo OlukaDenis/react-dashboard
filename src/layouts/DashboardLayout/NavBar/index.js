@@ -116,6 +116,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
 
   const handleLogout = () => {
     if (isLoggedIn && user) {
+      localStorage.removeItem('persist:shuppa');
       dispatch(authLoading());
       dispatch(setLogOut());
       dispatch(loggedInUser({}));

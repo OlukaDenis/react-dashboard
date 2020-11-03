@@ -1,3 +1,4 @@
+import storage from 'redux-persist/lib/storage';
 import { firebaseApp } from '../../firebase';
 
 import {
@@ -63,6 +64,7 @@ const logInUser = (payload) => (dispatch) => {
 };
 
 const logOutUser = () => (dispatch) => {
+  storage.removeItem('persist:shuppa');
   dispatch(authLoading());
   dispatch(setLogOut());
 };
