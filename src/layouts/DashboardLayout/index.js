@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-
+import LinearProgress from '@material-ui/core/LinearProgress';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import NavBar from './NavBar';
@@ -41,7 +41,7 @@ const DashboardLayout = () => {
   const [isMobileNavOpen, setMobileNavOpen] = useState(false);
 
   const authReducer = useSelector((state) => state.authReducer);
-  const { isLoggedIn } = authReducer;
+  const { isLoggedIn, loading } = authReducer;
   // const dispatch = useDispatch();
 
   useEffect(() => {
@@ -53,7 +53,6 @@ const DashboardLayout = () => {
 
   return (
     <div className={classes.root}>
-      {isLoggedIn}
       <TopBar onMobileNavOpen={() => setMobileNavOpen(true)} />
       <NavBar
         onMobileClose={() => setMobileNavOpen(false)}
@@ -62,6 +61,7 @@ const DashboardLayout = () => {
       <div className={classes.wrapper}>
         <div className={classes.contentContainer}>
           <div className={classes.content}>
+            { loading && <LinearProgress color="secondary" /> }
             <Outlet />
           </div>
         </div>
