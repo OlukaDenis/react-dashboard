@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
@@ -18,6 +19,12 @@ import {
   makeStyles
 } from '@material-ui/core';
 import { getInitials } from 'src/utils';
+import { db } from '../../../firebase';
+import AppAlerts from '../../../components/AppAlerts';
+import {
+  customerError, customerSuccess, customerLoading,
+} from '../../../store/actions/customerActions';
+import { showAlert } from '../../../store/actions/alertActions';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -26,11 +33,39 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, customers, ...rest }) => {
+const Results = ({ className, ...rest }) => {
   const classes = useStyles();
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
+  const [customers, setCustomers] = useState([]);
+
+  const customerReducer = useSelector((state) => state.customerReducer);
+  const { error } = customerReducer;
+  const dispatch = useDispatch();
+
+  const fetchAllCustomers = async () => {
+    dispatch(customerLoading());
+    db.collection('/users')
+      .get()
+      .then((snapshot) => {
+        const arr = [];
+        snapshot.docs.forEach((item) => {
+          arr.push(item.data());
+        });
+        setCustomers(arr);
+        dispatch(customerSuccess());
+      })
+      .catch((err) => {
+        dispatch(customerError(err.message));
+        dispatch(showAlert());
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    fetchAllCustomers();
+  }, []);
 
   const handleSelectAll = (event) => {
     let newSelectedCustomerIds;
@@ -100,7 +135,7 @@ const Results = ({ className, customers, ...rest }) => {
                   Email
                 </TableCell>
                 <TableCell>
-                  Location
+                  Address
                 </TableCell>
                 <TableCell>
                   Phone
@@ -114,7 +149,7 @@ const Results = ({ className, customers, ...rest }) => {
               {customers.slice(0, limit).map((customer) => (
                 <TableRow
                   hover
-                  key={customer.id}
+                  key={customer.uid}
                   selected={selectedCustomerIds.indexOf(customer.id) !== -1}
                 >
                   <TableCell padding="checkbox">
@@ -147,7 +182,7 @@ const Results = ({ className, customers, ...rest }) => {
                     {customer.email}
                   </TableCell>
                   <TableCell>
-                    {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
+                    {customer.address}
                   </TableCell>
                   <TableCell>
                     {customer.phone}
@@ -170,13 +205,14 @@ const Results = ({ className, customers, ...rest }) => {
         rowsPerPage={limit}
         rowsPerPageOptions={[5, 10, 25]}
       />
+
+      { error && <AppAlerts message="error" error={error} />}
     </Card>
   );
 };
 
 Results.propTypes = {
   className: PropTypes.string,
-  customers: PropTypes.array.isRequired
 };
 
 export default Results;

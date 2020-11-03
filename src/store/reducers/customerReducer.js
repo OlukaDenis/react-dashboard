@@ -2,19 +2,12 @@ import appConstants from '../constants';
 import initialState from '../initialState';
 
 const {
-  APP_LOADING, BLOG_ERROR, BLOG_REQUEST, BLOG_SUCCESS,
+  APP_LOADING, ALERT_ERROR, CUSTOMER_SUCCESS,
 } = appConstants;
 
-const blogReducer = (state = initialState, action) => {
+const customerReducer = (state = initialState, action) => {
   switch (action.type) {
-    case BLOG_REQUEST:
-      return {
-        ...state,
-        blogs: action.blogs,
-        loading: false,
-      };
-
-    case BLOG_SUCCESS:
+    case CUSTOMER_SUCCESS:
       return {
         ...state,
         loading: false,
@@ -26,7 +19,7 @@ const blogReducer = (state = initialState, action) => {
         loading: true,
       };
 
-    case BLOG_ERROR:
+    case ALERT_ERROR:
       return {
         ...state,
         error: action.message,
@@ -37,4 +30,4 @@ const blogReducer = (state = initialState, action) => {
   }
 };
 
-export default blogReducer;
+export default customerReducer;

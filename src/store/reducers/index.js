@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import projectReducer from './projectReducer';
 import skillReducer from './skillReducer';
-import blogReducer from './blogReducer';
+import customerReducer from './customerReducer';
 import drawerReducer from './drawerReducer';
 import authReducer from './authReducer';
 import alertReducer from './alertReducer';
@@ -9,7 +9,7 @@ import alertReducer from './alertReducer';
 const reducer = combineReducers({
   projectReducer,
   skillReducer,
-  blogReducer,
+  customerReducer,
   drawerReducer,
   authReducer,
   alertReducer,

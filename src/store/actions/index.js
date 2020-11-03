@@ -1,8 +1,6 @@
+import storage from 'redux-persist/lib/storage';
 import { firebaseApp } from '../../firebase';
 
-import {
-  blogError, blogLoading, blogSuccess, requestBlogs,
-} from './blogActions';
 import {
   requestProjects, projectError, projectLoading, projectSuccess,
 } from './projectActions';
@@ -42,19 +40,6 @@ const fetchSkills = () => (dispatch) => {
     });
 };
 
-const fetchBlogs = () => (dispatch) => {
-  dispatch(blogLoading());
-  fetch('data/blogs.json')
-    .then((res) => res.json())
-    .then((result) => {
-      dispatch(blogSuccess(result));
-      dispatch(requestBlogs(result));
-    })
-    .catch((err) => {
-      dispatch(blogError(err));
-    });
-};
-
 const openDrawer = () => (dispatch) => {
   dispatch(drawerOpened());
 };
@@ -79,6 +64,7 @@ const logInUser = (payload) => (dispatch) => {
 };
 
 const logOutUser = () => (dispatch) => {
+  storage.removeItem('persist:shuppa');
   dispatch(authLoading());
   dispatch(setLogOut());
 };
@@ -92,7 +78,6 @@ const signUpUser = () => (dispatch) => {
 export {
   fetchProjects,
   fetchSkills,
-  fetchBlogs,
   openDrawer,
   closeDrawer,
   logInUser,
