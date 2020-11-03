@@ -88,6 +88,8 @@ const RegisterView = () => {
             emailVerified: currentUser.emailVerified || false,
             image: currentUser.photoURL || '',
             admin: true,
+            address: '',
+            addressId: '',
             createdAt: Date.now(),
           }).then((res) => {
             console.log(res);

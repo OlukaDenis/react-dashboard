@@ -1,9 +1,6 @@
 import { firebaseApp } from '../../firebase';
 
 import {
-  blogError, blogLoading, blogSuccess, requestBlogs,
-} from './blogActions';
-import {
   requestProjects, projectError, projectLoading, projectSuccess,
 } from './projectActions';
 import {
@@ -39,19 +36,6 @@ const fetchSkills = () => (dispatch) => {
     })
     .catch((err) => {
       dispatch(skillError(err));
-    });
-};
-
-const fetchBlogs = () => (dispatch) => {
-  dispatch(blogLoading());
-  fetch('data/blogs.json')
-    .then((res) => res.json())
-    .then((result) => {
-      dispatch(blogSuccess(result));
-      dispatch(requestBlogs(result));
-    })
-    .catch((err) => {
-      dispatch(blogError(err));
     });
 };
 
@@ -92,7 +76,6 @@ const signUpUser = () => (dispatch) => {
 export {
   fetchProjects,
   fetchSkills,
-  fetchBlogs,
   openDrawer,
   closeDrawer,
   logInUser,
